@@ -79,7 +79,47 @@ app.get('/carrinho', (req, res) => {
     `);
 });
 
+app.post('/login', (req, res) => {
+    const { email, senha } = req.body;
 
+    const usuario = usuarios.find((user) => user.email === email && user.senha === senha);
+
+    if (usuario) {
+
+        res.cookie('userId', usuario.id, { maxAge: 900000, httpOnly: true });
+        res.send('Login realizado com sucesso!');
+    } else {
+        res.send('Credenciais inválidas. Tente novamente.');
+    }
+});
+
+app.get('/perfil', (req, res) => {
+    const userId = req.cookies.userId;
+
+    if (userId) {
+        const usuario = usuarios.find((user) => user.id === parseInt(userId, 10));
+
+        if (usuario) {
+            res.send(`
+          <h1>Perfil do Usuário</h1>
+          <p>ID: ${usuario.id}</p>
+          <p>Nome: ${usuario.nome}</p>
+          <p>Email: ${usuario.email}</p>
+          <a href="/logout">Sair</a>
+        `);
+        } else {
+            res.send('Usuário não encontrado.');
+        }
+    } else {
+        res.send('Usuário não está logado!');
+    }
+});
+
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('userId');
+    res.redirect('/perfil');
+});
 
 
 app.listen(3000, () => {
