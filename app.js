@@ -45,6 +45,8 @@ app.get('/produtos', (req, res) => {
         }
     </ul>
     <a href="/carrinho">Ver Carrinho</a>
+    <br></br>
+    <a href="/perfil">Voltar para perfil</a>
     `)
 });
 
@@ -95,13 +97,12 @@ app.get('/carrinho', (req, res) => {
             <a href="/produtos">Continuar Comprando</a>
         `);
     } else {
-        // Se não houver usuário logado, você pode tratar de outra forma ou redirecionar para a página de login
         res.send('Usuário não está logado.');
     }
 });
 
 
-app.get('/login', (req, res) => {
+app.get('/', (req, res) => {
     res.send(`
         <h1>Login</h1>
         <form method="post" action="/login">
@@ -132,7 +133,7 @@ app.post('/login', (req, res) => {
 
         res.redirect('/perfil');
     } else {
-        res.send('Credenciais inválidas. Tente novamente.');
+        res.send('Tente novamente.');
     }
 });
 
@@ -151,23 +152,23 @@ app.get('/perfil', (req, res) => {
               <p>Nome: ${usuario.nome}</p>
               <p>Email: ${usuario.email}</p>
               <a href="/produtos">Ir para Produtos</a>
+              <br></br>
               <a href="/logout">Sair</a>
             `);
         } else {
             res.send('Usuário não encontrado.');
         }
     } else {
-        // Redirecionar para a página de login se o usuário não estiver logado
-        res.redirect('/login');
+        res.redirect('/');
     }
 });
 
 
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(); // Limpa todos os dados da sessão
-    res.clearCookie('userId'); // Limpa o cookie do usuário
-    res.redirect('/login');
+    req.session.destroy();
+    res.clearCookie('userId');
+    res.redirect('/');
 });
 
 
